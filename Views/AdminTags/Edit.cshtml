@@ -1,0 +1,24 @@
+﻿@model BlogWebsite.Models.Domain.Tag
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container">
+    <h1>Edit</h1>
+
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="id" />
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+
+            <label asp-for="DisplayName" class="control-label"></label>
+            <input asp-for="DisplayName" class="form-control" />
+            <span asp-validation-for="DisplayName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-dark mt-3" />
+        </div>
+    </form>
+</div>
