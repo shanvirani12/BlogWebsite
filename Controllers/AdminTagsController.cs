@@ -1,6 +1,7 @@
 ﻿using BlogWebsite.Data;
 using BlogWebsite.Models.Domain;
 using BlogWebsite.Models.ViewModels;
+using BlogWebsite.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,35 +10,36 @@ namespace BlogWebsite.Controllers
     public class AdminTagsController : Controller
     {
         private BlogDbContext _blogDbContext;
+        private IAdminTagRepository AdminTagRepository;
 
-        public AdminTagsController(BlogDbContext blogDbContext)
+        public AdminTagsController(BlogDbContext blogDbContext, IAdminTagRepository AdminTagRepository)
         {
             this._blogDbContext = blogDbContext;
+            this.AdminTagRepository = AdminTagRepository;
         }
-        [HttpGet]
         public IActionResult Add()
         {
             return View();
         }
 
-        [HttpPost]
-        public IActionResult Add(AddTagsRequest addTagsRequest)
+        public async Task<IActionResult> Index()
         {
-            var tag = new Tag
-            {
-                Name = addTagsRequest.Name,
-                DisplayName = addTagsRequest.DisplayName
-            };
-            _blogDbContext.Tags.Add(tag);
-            _blogDbContext.SaveChanges();
+            var Tag = await AdminTagRepository.GetAllAsync();
+            return View(Tag);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(AddTagsRequest addTagsRequest)
+        {
+            await AdminTagRepository.CreateAsync(addTagsRequest);
             List<Tag> tags = _blogDbContext.Tags.ToList();
             return View("Index",tags);
         }
 
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
 
-            var tag = _blogDbContext.Tags.Find(id);
+            var tag = await AdminTagRepository.GetByIdAsync(id);
             if (tag == null)
             {
                 return NotFound();
@@ -46,30 +48,23 @@ namespace BlogWebsite.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Guid id, EditTagRequest editTagRequest)
+        public async Task<IActionResult> Edit(Guid id, EditTagRequest editTagRequest)
         {
-            var tag = _blogDbContext.Tags.Find(id);
-            tag.Name = editTagRequest.Name;
-            tag.DisplayName = editTagRequest.DisplayName;
-            _blogDbContext.SaveChanges();
+            await AdminTagRepository.UpdateAsync(id, editTagRequest);
             List<Tag> tags = _blogDbContext.Tags.ToList();
             return View("Index", tags);
         }
 
-        public IActionResult Index()
-        {
-            List<Tag> tags = _blogDbContext.Tags.ToList();
-            return View(tags);
-        }
 
-        public IActionResult Delete(Guid? id)
+
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var tag = _blogDbContext.Tags.FirstOrDefault(t => t.id == id);
+            var tag = await AdminTagRepository.GetByIdAsync(id.Value);
             if (tag == null)
             {
                 return NotFound();
@@ -79,11 +74,9 @@ namespace BlogWebsite.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var tag = _blogDbContext.Tags.Find(id);
-            _blogDbContext.Tags.Remove(tag);
-            _blogDbContext.SaveChanges();
+            await AdminTagRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }
