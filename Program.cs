@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdminTagRepository, AdminTagRepository>();
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("OfficeConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("HomeConnection")));
 
 var app = builder.Build();
 

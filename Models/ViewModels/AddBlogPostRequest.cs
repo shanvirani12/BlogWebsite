@@ -15,6 +15,6 @@ namespace BlogWebsite.Models.ViewModels
         public bool Visible { get; set; }
 
         public IEnumerable<SelectListItem> Tags { get; set; }
-        public string SelectedTag { get; set; }
+        public string[] SelectedTags { get; set; } = Array.Empty<string>();
     }
 }
