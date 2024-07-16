@@ -9,12 +9,10 @@ namespace BlogWebsite.Controllers
 {
     public class AdminTagsController : Controller
     {
-        private BlogDbContext _blogDbContext;
         private IAdminTagRepository AdminTagRepository;
 
-        public AdminTagsController(BlogDbContext blogDbContext, IAdminTagRepository AdminTagRepository)
+        public AdminTagsController(IAdminTagRepository AdminTagRepository)
         {
-            this._blogDbContext = blogDbContext;
             this.AdminTagRepository = AdminTagRepository;
         }
         public IActionResult Add()
@@ -32,7 +30,7 @@ namespace BlogWebsite.Controllers
         public async Task<IActionResult> Add(AddTagsRequest addTagsRequest)
         {
             await AdminTagRepository.CreateAsync(addTagsRequest);
-            List<Tag> tags = _blogDbContext.Tags.ToList();
+            var tags = await AdminTagRepository.GetAllAsync();
             return View("Index",tags);
         }
 
@@ -51,8 +49,8 @@ namespace BlogWebsite.Controllers
         public async Task<IActionResult> Edit(Guid id, EditTagRequest editTagRequest)
         {
             await AdminTagRepository.UpdateAsync(id, editTagRequest);
-            List<Tag> tags = _blogDbContext.Tags.ToList();
-            return View("Index", tags);
+			var tags = await AdminTagRepository.GetAllAsync();
+			return View("Index",tags);
         }
 
 
