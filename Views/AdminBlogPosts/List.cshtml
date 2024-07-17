@@ -9,6 +9,11 @@
 </div>
 
 <div class="container py-5">
+	<div class="col-md-2">
+		<p>
+			<a asp-action="Add" class="btn btn-dark">Create Blog</a>
+		</p>
+	</div>
 	<table class="table">
 		<thead>
 			<tr>
@@ -36,9 +41,15 @@
 						<a asp-area=""
 							asp-controller="AdminBlogPosts"
 							asp-action="Edit"
-							asp-route-id="@blogPost.id">
+							asp-route-id="@blogPost.id"
+							class="btn btn-dark">
 							Edit
 						</a>
+						<a asp-area=""
+						   asp-controller="AdminBlogPosts" 
+						   asp-action="Delete" 
+						   asp-route-id="@blogPost.id" 
+						   class="btn btn-danger">Delete</a>
 					</td>
 				</tr>
 			}

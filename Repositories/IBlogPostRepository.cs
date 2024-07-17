@@ -8,6 +8,6 @@ namespace BlogWebsite.Repositories
         Task<BlogPost> AddAsync(BlogPost blogPost);
         Task<BlogPost?> GetAsync(Guid id);
         Task<BlogPost?> UpdateAsync(BlogPost post);
-        Task<BlogPost?> DeleteAsync(Guid id);
+        Task DeleteAsync(Guid id);
     }
 }

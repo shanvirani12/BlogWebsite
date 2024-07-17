@@ -53,7 +53,8 @@ namespace BlogWebsite.Controllers
             }
             blogPost.Tags = selectedTags; 
             await blogPostRepository.AddAsync(blogPost);
-            return View(addBlogPostRequest);
+            var allBlogPosts = await blogPostRepository.GetAllAsync();
+            return View("List",allBlogPosts);
         }
 
         [HttpGet]
@@ -121,13 +122,38 @@ namespace BlogWebsite.Controllers
                 }
             }
             blogPostDomainModel.Tags = selectedTags;
-
-            var updatedBlog = await blogPostRepository.UpdateAsync(blogPostDomainModel);
+			var updatedBlog = await blogPostRepository.UpdateAsync(blogPostDomainModel);
             if (updatedBlog != null)
             {
-                return RedirectToAction("Edit");
+				var allBlogPosts = await blogPostRepository.GetAllAsync();
+				return RedirectToAction("List", allBlogPosts);
             }
-			return RedirectToAction("Edit");
+			var alBlogPosts = await blogPostRepository.GetAllAsync();
+			return RedirectToAction("List", alBlogPosts);
 		}
-    }
+
+		public async Task<IActionResult> Delete(Guid? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
+
+			var blogPost = await blogPostRepository.GetAsync(id.Value);
+			if (blogPost == null)
+			{
+				return NotFound();
+			}
+			return View(blogPost);
+		}
+
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(Guid id)
+		{
+			await blogPostRepository.DeleteAsync(id);
+            var allBlogPosts = await blogPostRepository.GetAllAsync();
+            return RedirectToAction("List", allBlogPosts);
+        }
+	}
 }

@@ -6,12 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdminTagRepository, AdminTagRepository>();
 builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
-
+builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<BlogDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("HomeConnection")));
+options.UseSqlServer(builder.Configuration.GetConnectionString("OfficeConnection")));
 
 var app = builder.Build();
 
